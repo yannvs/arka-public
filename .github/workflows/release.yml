@@ -1,0 +1,16 @@
+name: Release
+on: push
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for f in *.tpk; do
+            v=${f##*-}; v=${v%.tpk}
+            gh release view "v$v" >/dev/null 2>&1 || gh release create "v$v" "$f" --title "$v" --notes ""
+          done
